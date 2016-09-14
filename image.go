@@ -32,13 +32,15 @@ func (h *handler) getImages() (images map[string]*image, err error) {
 	images = make(map[string]*image)
 
 	for _, c := range containers {
+		cont, _ := h.Client.ContainerInspect(context.Background(), c.ID)
+
 		i, ok := images[c.Image]
 		if !ok {
-			images[c.Image] = &image{
+			images[cont.Config.Image] = &image{
 				handler: h,
-				id:      c.Image,
+				id:      cont.Config.Image,
 			}
-			i = images[c.Image]
+			i = images[cont.Config.Image]
 			i.hashes = make(map[string]*imageHash)
 		}
 		h, ok := i.hashes[c.ImageID]
@@ -46,7 +48,7 @@ func (h *handler) getImages() (images map[string]*image, err error) {
 			i.hashes[c.ImageID] = &imageHash{}
 			h = i.hashes[c.ImageID]
 		}
-		fmt.Printf("Adding %s with hash %s to %s", c.ID, c.ImageID, c.Image)
+		fmt.Printf("Adding %s with hash %s to %s\n", c.ID, c.ImageID, cont.Config.Image)
 		h.containers = append(h.containers, c.ID)
 	}
 
@@ -83,7 +85,9 @@ func (i *image) kick() error {
 		for _, c := range hh.containers {
 			fmt.Printf("Kicking container %s\n", c)
 			timeout := 10 * time.Second
+			fmt.Printf("Stopping container %s\n", c)
 			_ = i.handler.Client.ContainerStop(context.Background(), c, &timeout)
+			fmt.Printf("Removing container %s\n", c)
 			_ = i.handler.Client.ContainerRemove(context.Background(), c, types.ContainerRemoveOptions{})
 		}
 	}
