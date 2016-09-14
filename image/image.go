@@ -1,12 +1,14 @@
 package image
 
+// Image is a Docker image
 type Image struct {
 	ID     string
 	Hash   string
-	Hashes map[string]*ImageHash
+	Hashes map[string]*Hash
 }
 
-type ImageHash struct {
+// Hash is a specific Image
+type Hash struct {
 	Containers []string
 }
 
