@@ -1,0 +1,28 @@
+language: go
+sudo: required
+services: docker
+go:
+- 1.7
+install:
+- go get ./...
+- go get github.com/bradfitz/goimports
+- go get github.com/mattn/goveralls
+- go get golang.org/x/tools/cmd/cover
+script:
+- make
+- "./.travis/build.sh && ./.travis/test.sh && ./.travis/publish.sh"
+- make coverage
+- "$HOME/gopath/bin/goveralls -service=travis-ci -coverprofile=coverage.out"
+deploy:
+  provider: releases
+  api_key:
+    secure: Ae95idY3YjwpFrMTysmsqMgbFQXxyjm3soTk5/UrWbGl0UvXU+4dEDDwzQBl3SZqLFIccXU2yn+XUMKeWmwjiDx4nOp6iPMsv7I3rbCe5t6yvnn8FaBtaHgql8H3mdPTK79GnB7XetkaFSoEojBhGXIWiDMpNL5sBIgkbKsBJIAD7/2uwGNzGNUe0dou5aArbY/dlqVsHwsxSrn9aSPJYq1FVqpZXvTJzQi6MsREQXTlWsYvchy0/DvEW6efkyR0ApKV0cMBUBZBE7ubPxBzyiEFwvEycIEoSHaKj1Mx/wfbU2vzHYRRioCo4sTWEHQ3Xex0JIVcWN7BBE2R3AxdJosj91fIf+TfzjlcT6GMoquLTM0/R/s74VkE/sihBHXL1JXrYp0rKpliQGVJh4se3coNxjr8o0RXg/82SYV6Rdxdia9u7ISDhmzJV2bUwh6dlPqGOeSd0CLpF/ogXexcSXgPES5p3wyRdUAy3eWTo2P9e5/T5I4pl9z0BySbUZDl1pRG453YJp88c0Tvabf+kGWekmqTZ+28/VHGQZGvDAGLuK/t0HFpl6pEKW417KXceGfkMGB3sKIbNDK6gABeJLCLaxGMCyWgtdXF5ozjZXy3RWpVQgjrd1rvAsU6caPB9jnXXSVBIBCN7smBBx5UON0k12uEplzu0DxN8TJfSVo=
+  file:
+  - upkick
+  - upkick.1
+  on:
+    repo: camptocamp/upkick
+    tags: true
+env:
+  global:
+    secure: Gx0cywNVrJwFASQyQTwcutKfRKbCxLT3i/ZPRM9dt7isHF/mW6KcjGq52pJ9J3QMI1PL59LfZ/Hthz0MCXnJbMcdW0ASVREfWwz0FaPagVY5SAwRnpGlpqyCxmRpYZwC8puh9XxkdKpeyplzskz2gZJakv9HjStx9AbVUjCMvF7O5eQj50nCwwJpKYzaoS9Knmkf+s0qG6dRJny5Nwf5YbpjSauGQldxxrCyOHtTBBqtw1rnfCP5L3HkmWJ3mdhSs0M3qr5LewTMAY1tcSiKJWyvCyzgLywhoN/Td8rxUe4o74ciZC5jU09GZfKys8M8nVPETmSDJnzdvL8PhnZsp9sgIaSc4+7ZNCdtYxde/GiPchiw3TL5cwVqFYdA5NjtxTP1ct8nMvFsBWIcgD3MUO00dQU/Oy+Zx5mSRafD574OcANaJNL+JDGcNKdbnI4ehXLyhed6WYMlrhW3NTNvF1tGfdGVufB0zEDPk/LAwNkNTCV4+lmUtcvBWw4v6BLpe6AP/a2UkKY3jaSBVgucng2cxF1GA9wi0nQRiNJ8INd/6+lSm/Mj1aMetX9OA1ycNIqiDzupSPOQ0OQTSRuaxhwUcAf4gFUJP/biBQyIVqnXjJn2OwN1Z3tkXvt8KGg5JLJg+MyHIhuVZjfUpqaI8jpJTdftN4M5RBe9CZLrAlc=
