@@ -36,5 +36,9 @@ Help Options:
   -h, --help             Show this help message
 ```
 
-## Examples
+## Using Docker
 
+```shell
+$ docker run -v /var/run/docker.sock:/var/run/docker.sock:ro  --rm -ti \
+     camptocamp/upkick
+```
