@@ -7,12 +7,20 @@ import (
 )
 
 var version = "undefined"
+var upkick *handler
+
+func init() {
+	var err error
+	upkick, err = newHandler(version)
+	if err != nil {
+		log.Fatal(err.Error())
+	}
+}
 
 func main() {
 	var err error
 
-	h := newHandler(version)
-	images, err := h.getImages()
+	images, err := upkick.getImages()
 	if err != nil {
 		log.Errorf(err.Error())
 		os.Exit(1)

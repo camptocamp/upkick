@@ -88,8 +88,8 @@ func (i *image) kick() error {
 			timeout := 10 * time.Second
 			log.Debugf("Stopping container %s", c)
 			_ = i.handler.Client.ContainerStop(context.Background(), c, &timeout)
-			log.Debugf("Removing container %s", c)
-			_ = i.handler.Client.ContainerRemove(context.Background(), c, types.ContainerRemoveOptions{})
+			//			log.Debugf("Removing container %s", c)
+			//			_ = i.handler.Client.ContainerRemove(context.Background(), c, types.ContainerRemoveOptions{})
 		}
 	}
 
