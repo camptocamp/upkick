@@ -1,6 +1,6 @@
 #!/bin/bash
 
-openssl aes-256-cbc -K $encrypted_e21420eaa4fd_key -iv $encrypted_e21420eaa4fd_iv -in .dockercfg.enc -out ~/.dockercfg -d
+openssl aes-256-cbc -K $encrypted_45b586f32ae3_key -iv $encrypted_45b586f32ae3_iv -in .dockercfg.enc -out ~/.dockercfg -d
 
 if [ "$TRAVIS_BRANCH" == "master" ]; then
   echo "Deploying image to docker hub for master (latest)"
