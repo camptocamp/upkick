@@ -49,7 +49,7 @@ func (h *handler) getImages() (images map[string]*image, err error) {
 			i.hashes[c.ImageID] = &imageHash{}
 			h = i.hashes[c.ImageID]
 		}
-		log.Debugf("Adding %s with hash %s to %s\n", c.ID, c.ImageID, cont.Config.Image)
+		log.Debugf("Adding %s with hash %s to %s", c.ID, c.ImageID, cont.Config.Image)
 		h.containers = append(h.containers, c.ID)
 	}
 
@@ -63,32 +63,32 @@ func (i *image) String() string {
 
 // pull updates an image
 func (i *image) pull() error {
-	log.Debugf("Pulling image %s\n", i)
+	log.Debugf("Pulling image %s", i)
 	_, _ = i.handler.Client.ImagePull(context.Background(), i.id, types.ImagePullOptions{})
 	img, _, _ := i.handler.Client.ImageInspectWithRaw(context.Background(), i.id)
 	i.hash = img.ID
-	log.Infof("Image %s updated to %v\n", i, i.hash)
+	log.Infof("Image %s updated to %v", i, i.hash)
 	return nil
 }
 
 // kick stops and removes all containers
 // using an obsolete version of the image
 func (i *image) kick() error {
-	log.Debugf("Kicking containers for image %s\n", i)
+	log.Debugf("Kicking containers for image %s", i)
 
 	for h, hh := range i.hashes {
 		if h == i.hash {
 			// Already up-to-date
-			log.Debugf("Not kicking containers for up-to-date hash %s\n", h)
+			log.Debugf("Not kicking containers for up-to-date hash %s", h)
 			continue
 		}
 
 		for _, c := range hh.containers {
-			log.Debugf("Kicking container %s\n", c)
+			log.Debugf("Kicking container %s", c)
 			timeout := 10 * time.Second
-			log.Debugf("Stopping container %s\n", c)
+			log.Debugf("Stopping container %s", c)
 			_ = i.handler.Client.ContainerStop(context.Background(), c, &timeout)
-			log.Debugf("Removing container %s\n", c)
+			log.Debugf("Removing container %s", c)
 			_ = i.handler.Client.ContainerRemove(context.Background(), c, types.ContainerRemoveOptions{})
 		}
 	}
