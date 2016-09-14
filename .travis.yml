@@ -11,8 +11,8 @@ install:
 script:
 - make
 - "./.travis/build.sh && ./.travis/test.sh && ./.travis/publish.sh"
-- make coverage
-- "$HOME/gopath/bin/goveralls -service=travis-ci -coverprofile=coverage.out"
+#- make coverage
+#- "$HOME/gopath/bin/goveralls -service=travis-ci -coverprofile=coverage.out"
 deploy:
   provider: releases
   api_key:
