@@ -11,7 +11,7 @@ import (
 )
 
 type image struct {
-	handler *handler
+	handler *Upkick
 	id      string
 	hash    string
 	hashes  map[string]*imageHash
@@ -22,7 +22,7 @@ type imageHash struct {
 }
 
 // getImages returns a slice of image
-func (h *handler) getImages() (images map[string]*image, err error) {
+func (h *Upkick) getImages() (images map[string]*image, err error) {
 	log.Debug("Getting images")
 	containers, err := h.Client.ContainerList(context.Background(), types.ContainerListOptions{})
 	if err != nil {

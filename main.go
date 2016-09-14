@@ -7,11 +7,11 @@ import (
 )
 
 var version = "undefined"
-var upkick *handler
+var upkick *Upkick
 
 func init() {
 	var err error
-	upkick, err = newHandler(version)
+	upkick, err = newUpkick(version)
 	if err != nil {
 		log.Fatal(err.Error())
 	}
