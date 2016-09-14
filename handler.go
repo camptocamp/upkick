@@ -11,7 +11,7 @@ type handler struct {
 	Config *config
 }
 
-func NewHandler(version string) *handler {
+func newHandler(version string) *handler {
 	conf := loadConfig(version)
 	c, err := docker.NewClient(conf.Docker.Endpoint, "", nil, nil)
 	if err != nil {

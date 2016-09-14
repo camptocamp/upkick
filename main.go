@@ -11,7 +11,7 @@ var version = "undefined"
 func main() {
 	var err error
 
-	h := NewHandler(version)
+	h := newHandler(version)
 	images, err := h.getImages()
 	if err != nil {
 		log.Errorf(err.Error())
