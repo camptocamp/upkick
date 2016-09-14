@@ -101,7 +101,7 @@ func (u *Upkick) Kick(i *image.Image) (err error) {
 		}
 
 		for _, c := range hashS.Containers {
-			log.Debugf("Stopping container %s", c)
+			log.Infof("Stopping container %s", c)
 			timeout := 10 * time.Second
 			err = u.Client.ContainerStop(context.Background(), c, &timeout)
 			if err != nil {
@@ -109,7 +109,7 @@ func (u *Upkick) Kick(i *image.Image) (err error) {
 				return errors.Wrap(err, msg)
 			}
 
-			log.Debugf("Removing container %s", c)
+			log.Infof("Removing container %s", c)
 			err = u.Client.ContainerRemove(context.Background(), c, types.ContainerRemoveOptions{})
 			if err != nil {
 				msg := fmt.Sprintf("failed to remove container %s", c)
