@@ -4,14 +4,15 @@ import (
 	"os"
 
 	log "github.com/Sirupsen/logrus"
+	"github.com/camptocamp/upkick/handler"
 )
 
 var version = "undefined"
-var upkick *Upkick
+var kicker *handler.Upkick
 
 func init() {
 	var err error
-	upkick, err = newUpkick(version)
+	kicker, err = handler.NewUpkick(version)
 	if err != nil {
 		log.Fatal(err.Error())
 	}
@@ -20,19 +21,19 @@ func init() {
 func main() {
 	var err error
 
-	images, err := upkick.getImages()
+	images, err := kicker.GetImages()
 	if err != nil {
 		log.Errorf(err.Error())
 		os.Exit(1)
 	}
 
 	for _, i := range images {
-		err = i.pull()
+		err = kicker.Pull(i)
 		if err != nil {
 			log.Errorf("Failed to pull image %s: %v", i, err)
 		}
 
-		err = i.kick()
+		err = kicker.Kick(i)
 		if err != nil {
 			log.Errorf("Failed to kick containers for image %s: %v", i, err)
 		}

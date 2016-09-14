@@ -1,4 +1,4 @@
-package main
+package config
 
 import (
 	"bytes"
@@ -8,8 +8,8 @@ import (
 	"github.com/jessevdk/go-flags"
 )
 
-// config stores the handler's configuration and UI interface parameters
-type config struct {
+// Config stores the handler's configuration and UI interface parameters
+type Config struct {
 	Version  bool   `short:"V" long:"version" description:"Display version."`
 	Loglevel string `short:"l" long:"loglevel" description:"Set loglevel ('debug', 'info', 'warn', 'error', 'fatal', 'panic')." env:"CONPLICITY_LOG_LEVEL" default:"info"`
 	Manpage  bool   `short:"m" long:"manpage" description:"Output manpage."`
@@ -20,9 +20,9 @@ type config struct {
 	} `group:"Docker Options"`
 }
 
-// loadConfig loads the config from flags & environment
-func loadConfig(version string) *config {
-	var c config
+// LoadConfig loads the config from flags & environment
+func LoadConfig(version string) *Config {
+	var c Config
 	parser := flags.NewParser(&c, flags.Default)
 	if _, err := parser.Parse(); err != nil {
 		os.Exit(1)
