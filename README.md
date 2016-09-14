@@ -19,6 +19,22 @@ $ go get github.com/camptocamp/upkick
 
 ## Usage
 
+```shell
+Usage:
+  upkick [OPTIONS]
+
+Application Options:
+  -V, --version          Display version.
+  -l, --loglevel=        Set loglevel ('debug', 'info', 'warn', 'error', 'fatal', 'panic'). (default: info) [$CONPLICITY_LOG_LEVEL]
+  -m, --manpage          Output manpage.
+  -j, --json             Log as JSON (to stderr). [$CONPLICITY_JSON_OUTPUT]
+
+Docker Options:
+  -e, --docker-endpoint= The Docker endpoint. (default: unix:///var/run/docker.sock) [$DOCKER_ENDPOINT]
+
+Help Options:
+  -h, --help             Show this help message
+```
 
 ## Examples
 
