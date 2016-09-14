@@ -40,7 +40,11 @@ func (u *Upkick) GetImages() (images map[string]*image.Image, err error) {
 	images = make(map[string]*image.Image)
 
 	for _, c := range containers {
-		cont, _ := u.Client.ContainerInspect(context.Background(), c.ID)
+		cont, err := u.Client.ContainerInspect(context.Background(), c.ID)
+		if err != nil {
+			msg := fmt.Sprintf("failed to inspect container %s", c.ID)
+			return images, errors.Wrap(err, msg)
+		}
 
 		i, ok := images[c.Image]
 		if !ok {
@@ -65,16 +69,28 @@ func (u *Upkick) GetImages() (images map[string]*image.Image, err error) {
 // Pull pulls the newest version of an image
 func (u *Upkick) Pull(i *image.Image) (err error) {
 	log.Debugf("Pulling Image %s", i)
-	_, _ = u.Client.ImagePull(context.Background(), i.ID, types.ImagePullOptions{})
-	img, _, _ := u.Client.ImageInspectWithRaw(context.Background(), i.ID)
+
+	_, err = u.Client.ImagePull(context.Background(), i.ID, types.ImagePullOptions{})
+	if err != nil {
+		msg := fmt.Sprintf("failed to pull image %s", i.ID)
+		return errors.Wrap(err, msg)
+	}
+
+	img, _, err := u.Client.ImageInspectWithRaw(context.Background(), i.ID)
+	if err != nil {
+		msg := fmt.Sprintf("failed to inspect image %s", i.ID)
+		return errors.Wrap(err, msg)
+	}
+
 	i.Hash = img.ID
 	log.Infof("Image %s updated to %v", i, i.Hash)
-	return nil
+
+	return
 }
 
 // Kick stops and removes all containers
 // using an obsolete version of the Image
-func (u *Upkick) Kick(i *image.Image) error {
+func (u *Upkick) Kick(i *image.Image) (err error) {
 	log.Debugf("Kicking containers for Image %s", i)
 
 	for hash, hashS := range i.Hashes {
@@ -85,16 +101,24 @@ func (u *Upkick) Kick(i *image.Image) error {
 		}
 
 		for _, c := range hashS.Containers {
-			log.Debugf("Kicking container %s", c)
-			timeout := 10 * time.Second
 			log.Debugf("Stopping container %s", c)
-			_ = u.Client.ContainerStop(context.Background(), c, &timeout)
+			timeout := 10 * time.Second
+			err = u.Client.ContainerStop(context.Background(), c, &timeout)
+			if err != nil {
+				msg := fmt.Sprintf("failed to stop container %s", c)
+				return errors.Wrap(err, msg)
+			}
+
 			log.Debugf("Removing container %s", c)
-			_ = u.Client.ContainerRemove(context.Background(), c, types.ContainerRemoveOptions{})
+			err = u.Client.ContainerRemove(context.Background(), c, types.ContainerRemoveOptions{})
+			if err != nil {
+				msg := fmt.Sprintf("failed to remove container %s", c)
+				return errors.Wrap(err, msg)
+			}
 		}
 	}
 
-	return nil
+	return
 }
 
 func (u *Upkick) setup(version string) (err error) {
