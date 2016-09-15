@@ -191,7 +191,7 @@ func (u *Upkick) Kick(i *image.Image) (err error) {
 	m.NewEvent(&metrics.Event{
 		Value: strconv.Itoa(upNOK),
 	})
-	m = u.Metrics.NewMetric("upkick_outdated_not_updated", "gauge")
+	m = u.Metrics.NewMetric("upkick_containers_outdated_not_updated", "gauge")
 	m.NewEvent(&metrics.Event{
 		Value: strconv.Itoa(outWarn),
 	})
