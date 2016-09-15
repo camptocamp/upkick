@@ -162,30 +162,18 @@ func (u *Upkick) Kick(i *image.Image) (err error) {
 	m = u.Metrics.NewMetric("upkick_noup", "gauge")
 	m.NewEvent(&metrics.Event{
 		Value: strconv.Itoa(noup),
-		Labels: map[string]string{
-			"hostname": u.Hostname,
-		},
 	})
 	m = u.Metrics.NewMetric("upkick_upok", "gauge")
 	m.NewEvent(&metrics.Event{
 		Value: strconv.Itoa(upOK),
-		Labels: map[string]string{
-			"hostname": u.Hostname,
-		},
 	})
 	m = u.Metrics.NewMetric("upkick_upnok", "gauge")
 	m.NewEvent(&metrics.Event{
 		Value: strconv.Itoa(upNOK),
-		Labels: map[string]string{
-			"hostname": u.Hostname,
-		},
 	})
 	m = u.Metrics.NewMetric("upkick_outwarn", "gauge")
 	m.NewEvent(&metrics.Event{
 		Value: strconv.Itoa(outWarn),
-		Labels: map[string]string{
-			"hostname": u.Hostname,
-		},
 	})
 
 	return
