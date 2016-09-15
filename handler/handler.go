@@ -33,15 +33,6 @@ type Upkick struct {
 	Config   *config.Config
 	Hostname string
 	Metrics  *metrics.PrometheusMetrics
-	Counter  *Counter
-}
-
-// Counter tracks counters for the handler
-type Counter struct {
-	Noup    int
-	OutWarn int
-	UpOK    int
-	UpNOK   int
 }
 
 // NewUpkick returns a new Upkick handler
@@ -154,18 +145,23 @@ func (u *Upkick) Pull(i *image.Image) (err error) {
 func (u *Upkick) Kick(i *image.Image) (err error) {
 	log.Debugf("Kicking containers for Image %s", i)
 
+	var noup int
+	var outWarn int
+	var upOK int
+	var upNOK int
+
 	for hash, hashS := range i.Hashes {
 		if hash == i.Hash {
 			// Already up-to-date
 			log.Debugf("Not kicking containers for up-to-date hash %s", hash)
-			u.Counter.Noup += len(hashS.Containers)
+			noup += len(hashS.Containers)
 			continue
 		}
 
 		for _, c := range hashS.Containers {
 			if u.Config.Warn {
 				log.Warnf("Container %s uses an out-of-date image", c)
-				u.Counter.OutWarn++
+				outWarn++
 				continue
 			}
 
@@ -173,21 +169,51 @@ func (u *Upkick) Kick(i *image.Image) (err error) {
 			timeout := 10 * time.Second
 			err = u.Client.ContainerStop(context.Background(), c, &timeout)
 			if err != nil {
-				u.Counter.UpNOK++
-				msg := fmt.Sprintf("failed to stop container %s", c)
-				return errors.Wrap(err, msg)
+				upNOK++
+				log.Errorf("failed to stop container %s: %v", c, err)
+				continue
 			}
 
 			log.Infof("Removing container %s", c)
 			err = u.Client.ContainerRemove(context.Background(), c, types.ContainerRemoveOptions{})
 			if err != nil {
-				u.Counter.UpNOK++
-				msg := fmt.Sprintf("failed to remove container %s", c)
-				return errors.Wrap(err, msg)
+				upNOK++
+				log.Errorf("failed to remove container %s: %v", c, err)
+				continue
 			}
-			u.Counter.UpOK++
+			upOK++
 		}
 	}
+
+	m := u.Metrics.NewMetric("upkick_containers", "gauge")
+	m.NewEvent(&metrics.Event{
+		Value: strconv.Itoa(noup),
+		Labels: map[string]string{
+			"what":  "up_to_date",
+			"image": i.ID,
+		},
+	})
+	m.NewEvent(&metrics.Event{
+		Value: strconv.Itoa(upOK),
+		Labels: map[string]string{
+			"what":  "updated",
+			"image": i.ID,
+		},
+	})
+	m.NewEvent(&metrics.Event{
+		Value: strconv.Itoa(upNOK),
+		Labels: map[string]string{
+			"what":  "update_failed",
+			"image": i.ID,
+		},
+	})
+	m.NewEvent(&metrics.Event{
+		Value: strconv.Itoa(outWarn),
+		Labels: map[string]string{
+			"what":  "not_updated",
+			"image": i.ID,
+		},
+	})
 
 	return
 }
@@ -204,38 +230,11 @@ func (u *Upkick) PushMetrics() {
 	 *
 	 * - Image timestamp per hash (counter)
 	 */
-
-	m := u.Metrics.NewMetric("upkick_containers", "gauge")
-	m.NewEvent(&metrics.Event{
-		Value: strconv.Itoa(u.Counter.Noup),
-		Labels: map[string]string{
-			"what": "up_to_date",
-		},
-	})
-	m.NewEvent(&metrics.Event{
-		Value: strconv.Itoa(u.Counter.UpOK),
-		Labels: map[string]string{
-			"what": "updated",
-		},
-	})
-	m.NewEvent(&metrics.Event{
-		Value: strconv.Itoa(u.Counter.UpNOK),
-		Labels: map[string]string{
-			"what": "update_failed",
-		},
-	})
-	m.NewEvent(&metrics.Event{
-		Value: strconv.Itoa(u.Counter.OutWarn),
-		Labels: map[string]string{
-			"what": "not_updated",
-		},
-	})
 	u.Metrics.Push()
 }
 
 func (u *Upkick) setup(version string) (err error) {
 	u.Config = config.LoadConfig(version)
-	u.Counter = &Counter{}
 
 	err = u.setupLoglevel()
 	if err != nil {
