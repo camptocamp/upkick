@@ -70,7 +70,7 @@ func (p *PrometheusMetrics) Push() (err error) {
 		return
 	}
 	metrics := p.Metrics
-	url := p.PushgatewayURL + "/metrics/job/conplicity/instance/" + p.Instance
+	url := p.PushgatewayURL + "/metrics/job/upkick/instance/" + p.Instance
 
 	var data string
 	for _, m := range metrics {
