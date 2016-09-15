@@ -3,6 +3,7 @@ package handler
 import (
 	"context"
 	"fmt"
+	"strings"
 	"time"
 
 	log "github.com/Sirupsen/logrus"
@@ -14,6 +15,12 @@ import (
 	"github.com/camptocamp/upkick/config"
 	"github.com/camptocamp/upkick/image"
 )
+
+var blacklist = []string{
+	"rancher/agent",
+	"rancher/agent-instance",
+	"camptocamp/upkick",
+}
 
 // Upkick is an upkick handler
 type Upkick struct {
@@ -46,12 +53,18 @@ func (u *Upkick) GetImages() (images map[string]*image.Image, err error) {
 			return images, errors.Wrap(err, msg)
 		}
 
+		tag := cont.Config.Image
+		if blacklisted(tag) {
+			log.Debugf("Ignoring blacklisted image tag %s", tag)
+			continue
+		}
+
 		i, ok := images[c.Image]
 		if !ok {
-			images[cont.Config.Image] = &image.Image{
-				ID: cont.Config.Image,
+			images[tag] = &image.Image{
+				ID: tag,
 			}
-			i = images[cont.Config.Image]
+			i = images[tag]
 			i.Hashes = make(map[string]*image.Hash)
 		}
 		h, ok := i.Hashes[c.ImageID]
@@ -59,7 +72,7 @@ func (u *Upkick) GetImages() (images map[string]*image.Image, err error) {
 			i.Hashes[c.ImageID] = &image.Hash{}
 			h = i.Hashes[c.ImageID]
 		}
-		log.Debugf("Adding %s with hash %s to %s", c.ID, c.ImageID, cont.Config.Image)
+		log.Debugf("Adding %s with hash %s to %s", c.ID, c.ImageID, tag)
 		h.Containers = append(h.Containers, c.ID)
 	}
 
@@ -171,4 +184,16 @@ func (u *Upkick) setupLoglevel() (err error) {
 func (u *Upkick) setupDocker() (err error) {
 	u.Client, err = docker.NewClient(u.Config.Docker.Endpoint, "", nil, nil)
 	return
+}
+
+func blacklisted(tag string) bool {
+	baseImage := strings.Split(tag, ":")[0]
+
+	for _, b := range blacklist {
+		if baseImage == b {
+			return true
+		}
+	}
+
+	return false
 }
