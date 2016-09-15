@@ -41,17 +41,21 @@ Usage:
   upkick [OPTIONS]
 
 Application Options:
-  -V, --version          Display version.
-  -l, --loglevel=        Set loglevel ('debug', 'info', 'warn', 'error', 'fatal', 'panic'). (default: info) [$UPKICK_LOG_LEVEL]
-  -m, --manpage          Output manpage.
-  -j, --json             Log as JSON (to stderr). [$UPKICK_JSON_OUTPUT]
-  -w, --warn-only        Only warn, do not kick out-of-date containers. [$UPKICK_WARN_ONLY]
+  -V, --version                Display version.
+  -l, --loglevel=              Set loglevel ('debug', 'info', 'warn', 'error', 'fatal', 'panic'). (default: info) [$UPKICK_LOG_LEVEL]
+  -m, --manpage                Output manpage.
+  -j, --json                   Log as JSON (to stderr). [$UPKICK_JSON_OUTPUT]
+  -w, --warn-only              Only warn, do not kick out-of-date containers. [$UPKICK_WARN_ONLY]
+  -H, --hostname-from-rancher  Retrieve hostname from Rancher metadata. [$CONPLICITY_HOSTNAME_FROM_RANCHER]
 
 Docker Options:
-  -e, --docker-endpoint= The Docker endpoint. (default: unix:///var/run/docker.sock) [$DOCKER_ENDPOINT]
+  -e, --docker-endpoint=       The Docker endpoint. (default: unix:///var/run/docker.sock) [$DOCKER_ENDPOINT]
+
+Metrics Options:
+  -g, --gateway-url=           The prometheus push gateway URL to use. [$PUSHGATEWAY_URL]
 
 Help Options:
-  -h, --help             Show this help message
+  -h, --help                   Show this help message
 ```
 
 ## Using Docker
