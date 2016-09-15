@@ -159,28 +159,28 @@ func (u *Upkick) Kick(i *image.Image) (err error) {
 	}
 
 	var m *metrics.Metric
-	m = u.Metrics.NewMetric("upkick_containers_noup", "gauge")
+	m = u.Metrics.NewMetric("upkick_noup", "gauge")
 	m.NewEvent(&metrics.Event{
 		Value: strconv.Itoa(noup),
 		Labels: map[string]string{
 			"hostname": u.Hostname,
 		},
 	})
-	m = u.Metrics.NewMetric("upkick_containers_up-ok", "gauge")
+	m = u.Metrics.NewMetric("upkick_upok", "gauge")
 	m.NewEvent(&metrics.Event{
 		Value: strconv.Itoa(upOK),
 		Labels: map[string]string{
 			"hostname": u.Hostname,
 		},
 	})
-	m = u.Metrics.NewMetric("upkick_containers_up-nok", "gauge")
+	m = u.Metrics.NewMetric("upkick_upnok", "gauge")
 	m.NewEvent(&metrics.Event{
 		Value: strconv.Itoa(upNOK),
 		Labels: map[string]string{
 			"hostname": u.Hostname,
 		},
 	})
-	m = u.Metrics.NewMetric("upkick_containers_out-warn", "gauge")
+	m = u.Metrics.NewMetric("upkick_outwarn", "gauge")
 	m.NewEvent(&metrics.Event{
 		Value: strconv.Itoa(outWarn),
 		Labels: map[string]string{
