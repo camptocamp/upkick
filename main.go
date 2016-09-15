@@ -21,6 +21,8 @@ func init() {
 func main() {
 	var err error
 
+	log.Infof("Upkick v%s starting", version)
+
 	images, err := kicker.GetImages()
 	if err != nil {
 		log.Errorf(err.Error())
