@@ -13,8 +13,8 @@ import (
 	log "github.com/Sirupsen/logrus"
 	"github.com/pkg/errors"
 
-	docker "github.com/docker/engine-api/client"
-	"github.com/docker/engine-api/types"
+	"github.com/docker/docker/api/types"
+	docker "github.com/docker/docker/client"
 
 	"github.com/camptocamp/upkick/config"
 	"github.com/camptocamp/upkick/image"
