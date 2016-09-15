@@ -235,6 +235,7 @@ func (u *Upkick) PushMetrics() {
 
 func (u *Upkick) setup(version string) (err error) {
 	u.Config = config.LoadConfig(version)
+	u.Counter = &Counter{}
 
 	err = u.setupLoglevel()
 	if err != nil {
