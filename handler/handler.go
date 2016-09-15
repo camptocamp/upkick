@@ -3,6 +3,9 @@ package handler
 import (
 	"context"
 	"fmt"
+	"io/ioutil"
+	"net/http"
+	"os"
 	"strings"
 	"time"
 
@@ -14,6 +17,7 @@ import (
 
 	"github.com/camptocamp/upkick/config"
 	"github.com/camptocamp/upkick/image"
+	"github.com/camptocamp/upkick/metrics"
 )
 
 var blacklist = []string{
@@ -24,8 +28,10 @@ var blacklist = []string{
 
 // Upkick is an upkick handler
 type Upkick struct {
-	*docker.Client
-	*config.Config
+	Client   *docker.Client
+	Config   *config.Config
+	Hostname string
+	Metrics  *metrics.PrometheusMetrics
 }
 
 // NewUpkick returns a new Upkick handler
@@ -152,9 +158,19 @@ func (u *Upkick) setup(version string) (err error) {
 		return errors.Wrap(err, "failed to setup log level")
 	}
 
+	err = u.getHostname()
+	if err != nil {
+		return errors.Wrap(err, "failed to get hostname")
+	}
+
 	err = u.setupDocker()
 	if err != nil {
 		return errors.Wrap(err, "failed to setup Docker")
+	}
+
+	err = u.setupMetrics()
+	if err != nil {
+		return errors.Wrap(err, "failed to setup metrics")
 	}
 
 	return
@@ -186,8 +202,31 @@ func (u *Upkick) setupLoglevel() (err error) {
 	return
 }
 
+func (u *Upkick) getHostname() (err error) {
+	if u.Config.HostnameFromRancher {
+		resp, err := http.Get("http://rancher-metadata/latest/self/host/name")
+		if err != nil {
+			return err
+		}
+		defer resp.Body.Close()
+		body, err := ioutil.ReadAll(resp.Body)
+		if err != nil {
+			return err
+		}
+		u.Hostname = string(body)
+	} else {
+		u.Hostname, err = os.Hostname()
+	}
+	return
+}
+
 func (u *Upkick) setupDocker() (err error) {
 	u.Client, err = docker.NewClient(u.Config.Docker.Endpoint, "", nil, nil)
+	return
+}
+
+func (u *Upkick) setupMetrics() (err error) {
+	u.Metrics = metrics.NewMetrics(u.Hostname, u.Config.Metrics.PushgatewayURL)
 	return
 }
 
