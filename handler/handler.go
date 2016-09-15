@@ -54,7 +54,7 @@ func (u *Upkick) GetImages() (images map[string]*image.Image, err error) {
 		}
 
 		tag := cont.Config.Image
-		if blacklisted(tag) {
+		if blacklistedTag(tag) {
 			log.Debugf("Ignoring blacklisted image tag %s", tag)
 			continue
 		}
@@ -186,7 +186,7 @@ func (u *Upkick) setupDocker() (err error) {
 	return
 }
 
-func blacklisted(tag string) bool {
+func blacklistedTag(tag string) bool {
 	baseImage := strings.Split(tag, ":")[0]
 
 	for _, b := range blacklist {
