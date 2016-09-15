@@ -43,3 +43,7 @@ Help Options:
 $ docker run -v /var/run/docker.sock:/var/run/docker.sock:ro  --rm -ti \
      camptocamp/upkick
 ```
+
+## Per container opt-out
+
+You can set containers to only warn if they are outdated by placing an `io.upkick.warn_only=true` label on them.

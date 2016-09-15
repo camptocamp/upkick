@@ -59,6 +59,11 @@ func (u *Upkick) GetImages() (images map[string]*image.Image, err error) {
 			continue
 		}
 
+		if blacklistedContainer(cont) {
+			log.Debugf("Ignoring blacklisted container %s", cont.ID)
+			continue
+		}
+
 		i, ok := images[c.Image]
 		if !ok {
 			images[tag] = &image.Image{
@@ -193,6 +198,14 @@ func blacklistedTag(tag string) bool {
 		if baseImage == b {
 			return true
 		}
+	}
+
+	return false
+}
+
+func blacklistedContainer(cont types.ContainerJSON) bool {
+	if l, ok := cont.Config.Labels["io.upkick.warn_only"]; ok && l == "true" {
+		return true
 	}
 
 	return false
