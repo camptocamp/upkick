@@ -28,6 +28,7 @@ Application Options:
   -l, --loglevel=        Set loglevel ('debug', 'info', 'warn', 'error', 'fatal', 'panic'). (default: info) [$UPKICK_LOG_LEVEL]
   -m, --manpage          Output manpage.
   -j, --json             Log as JSON (to stderr). [$UPKICK_JSON_OUTPUT]
+  -w, --warn-only        Only warn, do not kick out-of-date containers. [$UPKICK_WARN_ONLY]
 
 Docker Options:
   -e, --docker-endpoint= The Docker endpoint. (default: unix:///var/run/docker.sock) [$DOCKER_ENDPOINT]
