@@ -1,3 +1,9 @@
+# [0.5.0](https://github.com/camptocamp/upkick/releases/tag/0.5.0) (2016-09-15)
+
+* Metrics:
+
+  - Make all metrics per image, with an image label
+
 # [0.4.0](https://github.com/camptocamp/upkick/releases/tag/0.4.0) (2016-09-15)
 
 * Metrics:
