@@ -32,6 +32,7 @@ test: lint vet imports
 
 coverage:
 	rm -rf *.out
+	echo "mode: set" > coverage.out
 	go test -coverprofile=coverage.out
 	for i in config handler image metrics; do \
 	 	go test -coverprofile=$$i.coverage.out github.com/camptocamp/upkick/$$i; \
