@@ -227,7 +227,7 @@ func (u *Upkick) PushMetrics() {
 	m.NewEvent(&metrics.Event{
 		Value: strconv.Itoa(u.Counter.OutWarn),
 		Labels: map[string]string{
-			"what": "update_not_updated",
+			"what": "not_updated",
 		},
 	})
 	u.Metrics.Push()
