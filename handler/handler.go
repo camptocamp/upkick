@@ -53,7 +53,7 @@ func (u *Upkick) GetImages() (images map[string]*image.Image, err error) {
 
 	images = make(map[string]*image.Image)
 
-	var containersTotal int = len(containers)
+	containersTotal := len(containers)
 	var blacklistedTag int
 	var blacklistedContainer int
 
