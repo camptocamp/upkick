@@ -1,3 +1,9 @@
+# [0.3.0](https://github.com/camptocamp/upkick/releases/tag/0.3.0) (2016-09-15)
+
+* Features:
+
+  - Added metrics (fix #2)
+
 # [0.2.0](https://github.com/camptocamp/upkick/releases/tag/0.2.0) (2016-09-15)
 
 * Features:
