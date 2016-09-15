@@ -58,11 +58,10 @@ Help Options:
   -h, --help                   Show this help message
 ```
 
-## Using Docker
+## Using the Docker image
 
 ```shell
-$ docker run -v /var/run/docker.sock:/var/run/docker.sock:ro  --rm -ti \
-     camptocamp/upkick
+$ docker run -v /var/run/docker.sock:/var/run/docker.sock:ro --rm -ti camptocamp/upkick
 ```
 
 ## Per container opt-out
