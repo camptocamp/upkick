@@ -67,11 +67,13 @@ func (u *Upkick) GetImages() (images map[string]*image.Image, err error) {
 		tag := cont.Config.Image
 		if blacklistedTag(tag) {
 			log.Debugf("Ignoring blacklisted image tag %s", tag)
+			blacklistedTags++
 			continue
 		}
 
 		if blacklistedContainer(cont) {
 			log.Debugf("Ignoring blacklisted container %s", cont.ID)
+			blacklistedContainers++
 			continue
 		}
 
