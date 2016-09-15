@@ -49,6 +49,12 @@ func (e *Event) String() string {
 	return fmt.Sprintf("%s{%s} %s", e.Name, strings.Join(labels, ","), e.Value)
 }
 
+// NewEvent adds an event to a Metric
+func (m *Metric) NewEvent(e *Event) {
+	e.Name = m.Name
+	m.Events = append(m.Events, e)
+}
+
 // NewMetric adds a new metric if it doesn't exist yet
 // or returns the existing matching metric otherwise
 func (p *PrometheusMetrics) NewMetric(name, mType string) (m *Metric) {

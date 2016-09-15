@@ -6,6 +6,7 @@ import (
 	"io/ioutil"
 	"net/http"
 	"os"
+	"strconv"
 	"strings"
 	"time"
 
@@ -117,16 +118,23 @@ func (u *Upkick) Pull(i *image.Image) (err error) {
 func (u *Upkick) Kick(i *image.Image) (err error) {
 	log.Debugf("Kicking containers for Image %s", i)
 
+	var noup int
+	var out_warn int
+	var up_ok int
+	var up_nok int
+
 	for hash, hashS := range i.Hashes {
 		if hash == i.Hash {
 			// Already up-to-date
 			log.Debugf("Not kicking containers for up-to-date hash %s", hash)
+			noup++
 			continue
 		}
 
 		for _, c := range hashS.Containers {
 			if u.Config.Warn {
 				log.Warnf("Container %s uses an out-of-date image", c)
+				out_warn++
 				continue
 			}
 
@@ -134,6 +142,7 @@ func (u *Upkick) Kick(i *image.Image) (err error) {
 			timeout := 10 * time.Second
 			err = u.Client.ContainerStop(context.Background(), c, &timeout)
 			if err != nil {
+				up_nok++
 				msg := fmt.Sprintf("failed to stop container %s", c)
 				return errors.Wrap(err, msg)
 			}
@@ -141,11 +150,43 @@ func (u *Upkick) Kick(i *image.Image) (err error) {
 			log.Infof("Removing container %s", c)
 			err = u.Client.ContainerRemove(context.Background(), c, types.ContainerRemoveOptions{})
 			if err != nil {
+				up_nok++
 				msg := fmt.Sprintf("failed to remove container %s", c)
 				return errors.Wrap(err, msg)
 			}
+			up_ok++
 		}
 	}
+
+	var m *metrics.Metric
+	m = u.Metrics.NewMetric("upkick_containers_noup", "gauge")
+	m.NewEvent(&metrics.Event{
+		Value: strconv.Itoa(noup),
+		Labels: map[string]string{
+			"hostname": u.Hostname,
+		},
+	})
+	m = u.Metrics.NewMetric("upkick_containers_up-ok", "gauge")
+	m.NewEvent(&metrics.Event{
+		Value: strconv.Itoa(up_ok),
+		Labels: map[string]string{
+			"hostname": u.Hostname,
+		},
+	})
+	m = u.Metrics.NewMetric("upkick_containers_up-nok", "gauge")
+	m.NewEvent(&metrics.Event{
+		Value: strconv.Itoa(up_nok),
+		Labels: map[string]string{
+			"hostname": u.Hostname,
+		},
+	})
+	m = u.Metrics.NewMetric("upkick_containers_out-warn", "gauge")
+	m.NewEvent(&metrics.Event{
+		Value: strconv.Itoa(out_warn),
+		Labels: map[string]string{
+			"hostname": u.Hostname,
+		},
+	})
 
 	return
 }
