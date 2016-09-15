@@ -14,6 +14,7 @@ type Config struct {
 	Loglevel string `short:"l" long:"loglevel" description:"Set loglevel ('debug', 'info', 'warn', 'error', 'fatal', 'panic')." env:"UPKICK_LOG_LEVEL" default:"info"`
 	Manpage  bool   `short:"m" long:"manpage" description:"Output manpage."`
 	JSON     bool   `short:"j" long:"json" description:"Log as JSON (to stderr)." env:"UPKICK_JSON_OUTPUT"`
+	Warn     bool   `short:"w" long:"warn-only" description:"Only warn, do not kick out-of-date containers." env:"UPKICK_WARN_ONLY"`
 
 	Docker struct {
 		Endpoint string `short:"e" long:"docker-endpoint" description:"The Docker endpoint." env:"DOCKER_ENDPOINT" default:"unix:///var/run/docker.sock"`

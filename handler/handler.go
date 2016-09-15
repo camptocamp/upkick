@@ -101,6 +101,11 @@ func (u *Upkick) Kick(i *image.Image) (err error) {
 		}
 
 		for _, c := range hashS.Containers {
+			if u.Config.Warn {
+				log.Warnf("Container %s uses an out-of-date image", c)
+				continue
+			}
+
 			log.Infof("Stopping container %s", c)
 			timeout := 10 * time.Second
 			err = u.Client.ContainerStop(context.Background(), c, &timeout)
