@@ -53,27 +53,29 @@ func (u *Upkick) GetImages() (images map[string]*image.Image, err error) {
 
 	images = make(map[string]*image.Image)
 
-	containersTotal := len(containers)
-	var blacklistedTags int
-	var blacklistedContainers int
+	containersTotal := make(map[string]int)
+	blacklistedTags := make(map[string]int)
+	blacklistedContainers := make(map[string]int)
 
 	for _, c := range containers {
 		cont, err := u.Client.ContainerInspect(context.Background(), c.ID)
 		if err != nil {
-			msg := fmt.Sprintf("failed to inspect container %s", c.ID)
-			return images, errors.Wrap(err, msg)
+			log.Errorf("failed to inspect container %s: %v", c.ID, err)
+			continue
 		}
 
 		tag := cont.Config.Image
+		containersTotal[tag]++
+
 		if blacklistedTag(tag) {
 			log.Debugf("Ignoring blacklisted image tag %s", tag)
-			blacklistedTags++
+			blacklistedTags[tag]++
 			continue
 		}
 
 		if blacklistedContainer(cont) {
 			log.Debugf("Ignoring blacklisted container %s", cont.ID)
-			blacklistedContainers++
+			blacklistedContainers[tag]++
 			continue
 		}
 
@@ -95,25 +97,31 @@ func (u *Upkick) GetImages() (images map[string]*image.Image, err error) {
 	}
 
 	var m *metrics.Metric
-	m = u.Metrics.NewMetric("upkick_containers", "gauge")
-	m.NewEvent(&metrics.Event{
-		Value: strconv.Itoa(containersTotal),
-		Labels: map[string]string{
-			"what": "total",
-		},
-	})
-	m.NewEvent(&metrics.Event{
-		Value: strconv.Itoa(blacklistedTags),
-		Labels: map[string]string{
-			"what": "blacklisted_tag",
-		},
-	})
-	m.NewEvent(&metrics.Event{
-		Value: strconv.Itoa(blacklistedContainers),
-		Labels: map[string]string{
-			"what": "blacklisted_container",
-		},
-	})
+	for _, i := range images {
+		tag := i.ID
+		m = u.Metrics.NewMetric("upkick_containers", "gauge")
+		m.NewEvent(&metrics.Event{
+			Value: strconv.Itoa(containersTotal[tag]),
+			Labels: map[string]string{
+				"what":  "total",
+				"image": tag,
+			},
+		})
+		m.NewEvent(&metrics.Event{
+			Value: strconv.Itoa(blacklistedTags[tag]),
+			Labels: map[string]string{
+				"what":  "blacklisted_tag",
+				"image": tag,
+			},
+		})
+		m.NewEvent(&metrics.Event{
+			Value: strconv.Itoa(blacklistedContainers[tag]),
+			Labels: map[string]string{
+				"what":  "blacklisted_container",
+				"image": tag,
+			},
+		})
+	}
 
 	return
 }
