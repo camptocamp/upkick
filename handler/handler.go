@@ -95,17 +95,24 @@ func (u *Upkick) GetImages() (images map[string]*image.Image, err error) {
 	}
 
 	var m *metrics.Metric
-	m = u.Metrics.NewMetric("upkick_containers_total", "gauge")
+	m = u.Metrics.NewMetric("upkick_containers", "gauge")
 	m.NewEvent(&metrics.Event{
 		Value: strconv.Itoa(containersTotal),
+		Labels: map[string]string{
+			"what": "total",
+		},
 	})
-	m = u.Metrics.NewMetric("upkick_containers_blacklisted_tag", "gauge")
 	m.NewEvent(&metrics.Event{
 		Value: strconv.Itoa(blacklistedTags),
+		Labels: map[string]string{
+			"what": "blacklisted_tag",
+		},
 	})
-	m = u.Metrics.NewMetric("upkick_containers_blacklisted_container", "gauge")
 	m.NewEvent(&metrics.Event{
 		Value: strconv.Itoa(blacklistedContainers),
+		Labels: map[string]string{
+			"what": "blacklisted_container",
+		},
 	})
 
 	return
@@ -179,21 +186,30 @@ func (u *Upkick) Kick(i *image.Image) (err error) {
 	}
 
 	var m *metrics.Metric
-	m = u.Metrics.NewMetric("upkick_containers_up_to_date", "gauge")
+	m = u.Metrics.NewMetric("upkick_containers", "gauge")
 	m.NewEvent(&metrics.Event{
 		Value: strconv.Itoa(noup),
+		Labels: map[string]string{
+			"what": "up_to_date",
+		},
 	})
-	m = u.Metrics.NewMetric("upkick_containers_updated", "gauge")
 	m.NewEvent(&metrics.Event{
 		Value: strconv.Itoa(upOK),
+		Labels: map[string]string{
+			"what": "updated",
+		},
 	})
-	m = u.Metrics.NewMetric("upkick_containers_update_failed", "gauge")
 	m.NewEvent(&metrics.Event{
 		Value: strconv.Itoa(upNOK),
+		Labels: map[string]string{
+			"what": "update_failed",
+		},
 	})
-	m = u.Metrics.NewMetric("upkick_containers_outdated_not_updated", "gauge")
 	m.NewEvent(&metrics.Event{
 		Value: strconv.Itoa(outWarn),
+		Labels: map[string]string{
+			"what": "update_not_updated",
+		},
 	})
 
 	return
