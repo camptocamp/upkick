@@ -54,8 +54,8 @@ func (u *Upkick) GetImages() (images map[string]*image.Image, err error) {
 	images = make(map[string]*image.Image)
 
 	containersTotal := len(containers)
-	var blacklistedTag int
-	var blacklistedContainer int
+	var blacklistedTags int
+	var blacklistedContainers int
 
 	for _, c := range containers {
 		cont, err := u.Client.ContainerInspect(context.Background(), c.ID)
@@ -99,11 +99,11 @@ func (u *Upkick) GetImages() (images map[string]*image.Image, err error) {
 	})
 	m = u.Metrics.NewMetric("upkick_containers_blacklisted_tag", "gauge")
 	m.NewEvent(&metrics.Event{
-		Value: strconv.Itoa(blacklistedTag),
+		Value: strconv.Itoa(blacklistedTags),
 	})
 	m = u.Metrics.NewMetric("upkick_containers_blacklisted_container", "gauge")
 	m.NewEvent(&metrics.Event{
-		Value: strconv.Itoa(blacklistedContainer),
+		Value: strconv.Itoa(blacklistedContainers),
 	})
 
 	return
@@ -145,7 +145,7 @@ func (u *Upkick) Kick(i *image.Image) (err error) {
 		if hash == i.Hash {
 			// Already up-to-date
 			log.Debugf("Not kicking containers for up-to-date hash %s", hash)
-			noup += len(hash.containers)
+			noup += len(hashS.Containers)
 			continue
 		}
 
