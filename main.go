@@ -41,15 +41,5 @@ func main() {
 		}
 	}
 
-	/* Metrics per node:
-	 *
-	 * - States (gauges):
-	 *   - NOUP:     up-to-date containers
-	 *   - UP-OK:    container successfully updated
-	 *   - UP-NOK:   container failed to update
-	 *   - OUT-WARN: container is out-of-date but not updated
-	 *
-	 * - Image timestamp per hash (counter)
-	 */
-	kicker.Metrics.Push()
+	kicker.PushMetrics()
 }
