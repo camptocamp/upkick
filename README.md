@@ -21,10 +21,10 @@ $ go get github.com/camptocamp/upkick
 
 Upkick helps you keep your containers up-to-date. When you launch it, it performs the following actions:
 
-1) list all running containers on the Docker socket
-2) update (pull) all images used in the containers
-3) unless `--warn-only` is used, stop/remove all containers using outdated images (you need an orchestrator such as Rancher to restart them)
-4) if a Prometheus gateway is provided, push metrics to it
+* list all running containers on the Docker socket
+* update (pull) all images used in the containers
+* unless `--warn-only` is used, stop/remove all containers using outdated images (you need an orchestrator such as Rancher to restart them)
+* if a Prometheus gateway is provided, push metrics to it
 
 
 ## Isn't that what catalog templates are for?
