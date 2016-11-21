@@ -1,3 +1,9 @@
+# [0.6.0](https://github.com/camptocamp/upkick/releases/tag/0.5.0) (2016-11-21)
+
+* Metrics:
+
+  - Add container opt-in label
+
 # [0.5.0](https://github.com/camptocamp/upkick/releases/tag/0.5.0) (2016-09-15)
 
 * Metrics:
