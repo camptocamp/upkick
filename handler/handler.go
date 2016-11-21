@@ -167,7 +167,15 @@ func (u *Upkick) Kick(i *image.Image) (err error) {
 		}
 
 		for _, c := range hashS.Containers {
-			if u.Config.Warn {
+			cont, err := u.Client.ContainerInspect(context.Background(), c)
+			if err != nil {
+				log.Errorf("failed to inspect container %s: %v", c, err)
+				continue
+			}
+
+			warnOnly, warnLabel := cont.Config.Labels["io.upkick.warn_only"]
+
+			if u.Config.Warn && !(warnLabel && warnOnly == "false") {
 				log.Warnf("Container %s uses an out-of-date image", c)
 				outWarn++
 				continue

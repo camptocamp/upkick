@@ -68,6 +68,10 @@ $ docker run -v /var/run/docker.sock:/var/run/docker.sock:ro --rm -ti camptocamp
 
 You can set containers to only warn if they are outdated by placing an `io.upkick.warn_only=true` label on them.
 
+## Per container opt-in
+
+If the global `--warn-only` flag is passed, you can opt-in for container kicking by placing an `io.upkick.warn_only=false` label on them.
+
 
 ## Metrics
 
