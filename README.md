@@ -10,6 +10,8 @@ Upkick
 
 Unattended upgrades for Docker containers, the hard way.
 
+![Upkick](images/upkick.png)
+
 
 ## Installing
 
