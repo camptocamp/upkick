@@ -45,7 +45,9 @@ func NewUpkick(version string) (*Upkick, error) {
 // GetImages returns a slice of Image
 func (u *Upkick) GetImages() (images map[string]*image.Image, err error) {
 	log.Debug("Getting images")
-	containers, err := u.Client.ContainerList(context.Background(), types.ContainerListOptions{})
+	containers, err := u.Client.ContainerList(context.Background(), types.ContainerListOptions{
+		All: true,
+	})
 	if err != nil {
 		err = errors.Wrap(err, "failed to list containers")
 		return
@@ -180,14 +182,17 @@ func (u *Upkick) Kick(i *image.Image) (err error) {
 				outWarn++
 				continue
 			}
-
-			log.Infof("Stopping container %s", c)
-			timeout := 10 * time.Second
-			err = u.Client.ContainerStop(context.Background(), c, &timeout)
-			if err != nil {
-				upNOK++
-				log.Errorf("failed to stop container %s: %v", c, err)
-				continue
+			if cont.State.Running {
+				log.Infof("Stopping container %s", c)
+				timeout := 10 * time.Second
+				err = u.Client.ContainerStop(context.Background(), c, &timeout)
+				if err != nil {
+					upNOK++
+					log.Errorf("failed to stop container %s: %v", c, err)
+					continue
+				}
+			} else {
+				log.Infof("Container %s already stopped", c)
 			}
 
 			log.Infof("Removing container %s", c)
