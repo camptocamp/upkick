@@ -1,4 +1,10 @@
-# [0.6.0](https://github.com/camptocamp/upkick/releases/tag/0.5.0) (2016-11-21)
+# [0.7.0](https://github.com/camptocamp/upkick/releases/tag/0.7.0) (2018-05-02)
+
+* Features:
+
+  - Also check stopped containers (GH #10)
+
+# [0.6.0](https://github.com/camptocamp/upkick/releases/tag/0.6.0) (2016-11-21)
 
 * Metrics:
 
