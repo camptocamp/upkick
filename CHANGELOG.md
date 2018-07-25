@@ -1,3 +1,9 @@
+# [0.7.1](https://github.com/camptocamp/upkick/releases/tag/0.7.1) (2018-07-25)
+
+* Features:
+
+  - Wait for the pull to be complete before continuing (GH #11)
+
 # [0.7.0](https://github.com/camptocamp/upkick/releases/tag/0.7.0) (2018-05-02)
 
 * Features:
