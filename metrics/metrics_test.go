@@ -12,8 +12,9 @@ func TestEventString(t *testing.T) {
 		Value: "bar",
 	}
 	expected := "foo{volume=\"baz\",instance=\"qux\"} bar"
-	if e.String() != expected {
-		t.Fatalf("Expected %s, got %s", expected, e.String())
+	expected2 := "foo{instance=\"qux\", volume=\"baz\"} bar"
+	if e.String() != expected && e.String() != expected2 {
+		t.Fatalf("Expected <%s>, got <%s>", expected, e.String())
 	}
 }
 
