@@ -3,6 +3,7 @@ package handler
 import (
 	"context"
 	"fmt"
+	"io"
 	"io/ioutil"
 	"net/http"
 	"os"
@@ -132,11 +133,16 @@ func (u *Upkick) GetImages() (images map[string]*image.Image, err error) {
 func (u *Upkick) Pull(i *image.Image) (err error) {
 	log.Debugf("Pulling Image %s", i)
 
-	_, err = u.Client.ImagePull(context.Background(), i.ID, types.ImagePullOptions{})
+	var pullOut io.ReadCloser
+	pullOut, err = u.Client.ImagePull(context.Background(), i.ID, types.ImagePullOptions{})
 	if err != nil {
 		msg := fmt.Sprintf("failed to pull image %s", i.ID)
 		return errors.Wrap(err, msg)
 	}
+
+	// Wait for the image to be fully pulled
+	io.Copy(ioutil.Discard, pullOut);
+	pullOut.Close()
 
 	img, _, err := u.Client.ImageInspectWithRaw(context.Background(), i.ID)
 	if err != nil {
