@@ -151,7 +151,7 @@ func (u *Upkick) Pull(i *image.Image) (err error) {
 	}
 
 	i.Hash = img.ID
-	log.Infof("Image %s updated to %v", i, i.Hash)
+	log.Infof("Image %s has hash %v", i, i.Hash)
 
 	return
 }
@@ -159,7 +159,7 @@ func (u *Upkick) Pull(i *image.Image) (err error) {
 // Kick stops and removes all containers
 // using an obsolete version of the Image
 func (u *Upkick) Kick(i *image.Image) (err error) {
-	log.Debugf("Kicking containers for Image %s", i)
+	log.Debugf("Inspecting containers for Image %s", i)
 
 	var noup int
 	var outWarn int
