@@ -3,8 +3,8 @@ package main
 import (
 	"os"
 
-	log "github.com/Sirupsen/logrus"
 	"github.com/camptocamp/upkick/handler"
+	log "github.com/sirupsen/logrus"
 )
 
 var version = "undefined"
@@ -33,6 +33,7 @@ func main() {
 		err = kicker.Pull(i)
 		if err != nil {
 			log.Errorf("Failed to pull image %s: %v", i, err)
+			continue
 		}
 
 		err = kicker.Kick(i)
