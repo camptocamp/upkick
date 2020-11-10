@@ -3,8 +3,8 @@ package main
 import (
 	"os"
 
-	log "github.com/Sirupsen/logrus"
 	"github.com/camptocamp/upkick/handler"
+	log "github.com/sirupsen/logrus"
 )
 
 var version = "undefined"

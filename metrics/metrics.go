@@ -7,7 +7,7 @@ import (
 	"net/http"
 	"strings"
 
-	log "github.com/Sirupsen/logrus"
+	log "github.com/sirupsen/logrus"
 )
 
 // PrometheusMetrics is a struct to push metrics to Prometheus

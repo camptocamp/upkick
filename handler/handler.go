@@ -11,8 +11,8 @@ import (
 	"strings"
 	"time"
 
-	log "github.com/Sirupsen/logrus"
 	"github.com/pkg/errors"
+	log "github.com/sirupsen/logrus"
 
 	"github.com/docker/docker/api/types"
 	docker "github.com/docker/docker/client"
@@ -141,7 +141,7 @@ func (u *Upkick) Pull(i *image.Image) (err error) {
 	}
 
 	// Wait for the image to be fully pulled
-	io.Copy(ioutil.Discard, pullOut);
+	io.Copy(ioutil.Discard, pullOut)
 	pullOut.Close()
 
 	img, _, err := u.Client.ImageInspectWithRaw(context.Background(), i.ID)
