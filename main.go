@@ -33,6 +33,7 @@ func main() {
 		err = kicker.Pull(i)
 		if err != nil {
 			log.Errorf("Failed to pull image %s: %v", i, err)
+			continue
 		}
 
 		err = kicker.Kick(i)
